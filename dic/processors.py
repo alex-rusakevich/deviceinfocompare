@@ -1,5 +1,5 @@
 import subprocess, json
-from dic.data import Device, Revision, DeclarativeBase
+from dic.data import Device, Dump, DeclarativeBase
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 import datetime, locale
@@ -14,6 +14,35 @@ class BaseProcessor:
     def __del__(self) -> None:
         self.session.close()
         self.engine.dispose()
+
+    def remove_dump(self, dump_id: int):
+        dumps = self.session.query(Dump).filter_by(id=dump_id)
+        for rev in dumps:
+            self.session.delete(rev)
+
+        devices = self.session.query(Device).filter_by(dump_id=dump_id)
+        for dev in devices:
+            self.session.delete(dev)
+        self.session.commit()
+
+    def clear_dumps(self) -> None:
+        dumps = self.session.query(Dump)
+        for rev in dumps:
+            self.session.delete(rev)
+
+        devices = self.session.query(Device)
+        for dev in devices:
+            self.session.delete(dev)
+        self.session.commit()
+
+    def get_dump_list(self) -> list[tuple]:
+        dumps = self.session.query(Dump)
+        rev_list = []
+
+        for rev in dumps:
+            rev_list.append((rev.id, rev.datetime))
+
+        return rev_list
 
     def get_devices(self) -> list[Device]:
         pass
@@ -47,20 +76,22 @@ class WindowsProcessor(BaseProcessor):
                 device_name=json_device["FriendlyName"],
                 device_class=json_device["Class"],
                 device_status=status,
-                revision=None,
+                dump_id=None,
             )
             device_list.append(device)
 
         return device_list
 
-    def dump_devices(self) -> None:
-        revision = Revision(datetime=datetime.datetime.utcnow())
-        self.session.add(revision)
+    def dump_devices(self) -> Dump:
+        dump = Dump(datetime=datetime.datetime.utcnow())
+        self.session.add(dump)
         self.session.commit()
-        self.session.refresh(revision)
+        self.session.refresh(dump)
 
         device_list = self.get_devices()
         for device in device_list:
-            device.revision = revision.id
+            device.dump_id = dump.id
             self.session.add(device)
             self.session.commit()
+
+        return dump
