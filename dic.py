@@ -1,4 +1,4 @@
-import platform, argparse
+import platform, argparse, colorama
 from dic.processors import *
 from tabulate import tabulate
 from dic.compare import compare_device_list
@@ -10,6 +10,7 @@ def main():
 
     if system_name == "Windows":
         data_processor = WindowsProcessor()
+        colorama.just_fix_windows_console()
     else:
         raise Exception(f"DIC can't work on {system_name} yet")
 
@@ -76,7 +77,7 @@ def main():
             print(tabulate(dump_data_list, headers=("ID", "Datetime created")))
             print("\nDatabase has", len(dump_data_list), "dumps in total")
     elif args.compare:
-        compare_result = compare_device_list(
+        compare_device_list(
             data_processor.get_current_devices(),
             data_processor.get_devices_of_last_dump(),
         )

@@ -50,6 +50,8 @@ class BaseProcessor:
 
     def get_devices_of_last_dump(self) -> list[Device]:
         dump = self.session.query(Dump).order_by(Dump.id.desc()).first()
+        if not dump:
+            raise Exception("No dumps found")
         return self.session.query(Device).filter_by(dump_id=dump.id)
 
     def get_current_devices(self) -> list[Device]:
