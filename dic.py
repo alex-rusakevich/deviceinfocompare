@@ -21,7 +21,7 @@ def main():
     argparser.add_argument(
         "-r",
         "--remove",
-        metavar="REV_ID",
+        metavar="DUMP_ID",
         type=int,
         nargs=1,
         help="remove a dump with id specified",
@@ -42,7 +42,15 @@ def main():
         "-c",
         "--compare",
         action="store_true",
-        help="compare current configuration with the newest dump",
+        help="compare current configuration to the newest dump",
+    )
+    argparser.add_argument(
+        "-ct",
+        "--compare-to",
+        metavar="DUMP_ID",
+        type=int,
+        nargs=1,
+        help="compare current configuration to existing dump by entering its id",
     )
     args = argparser.parse_args()
 
@@ -58,13 +66,15 @@ def main():
         if user_answer.lower().strip() == "y":
             data_processor.remove_dump(args.remove[0])
             print(f"Dump #{args.remove[0]} was removed successfully")
-        print("Delete cancelled")
+        else:
+            print("Delete cancelled")
     elif args.clear_all:
         user_answer = input("Are you sure you want to delete all dumps? [y\\n]: ")
         if user_answer.lower().strip() == "y":
             data_processor.clear_dumps()
             print("All the dumps were deleted successfully")
-        print("Delete cancelled")
+        else:
+            print("Delete cancelled")
     elif args.list_dumps:
         dump_data_list = data_processor.get_dump_list()
 
@@ -80,6 +90,11 @@ def main():
         compare_device_list(
             data_processor.get_current_devices(),
             data_processor.get_devices_of_last_dump(),
+        )
+    elif args.compare_to:
+        compare_device_list(
+            data_processor.get_current_devices(),
+            data_processor.get_devices_by_dump_id(args.compare_to[0]),
         )
 
 

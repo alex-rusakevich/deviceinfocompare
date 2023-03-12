@@ -46,6 +46,8 @@ class BaseProcessor:
 
     def get_devices_by_dump_id(self, dump_id) -> list[Device]:
         devices = self.session.query(Device).filter_by(dump_id=dump_id)
+        if not devices or not self.session.query(Dump).filter_by(id=dump_id).first():
+            raise Exception(f"No devices found by dump_id {dump_id}")
         return devices
 
     def get_devices_of_last_dump(self) -> list[Device]:

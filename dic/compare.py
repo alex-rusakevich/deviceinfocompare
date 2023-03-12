@@ -33,13 +33,15 @@ def compare_device_list(current_devices, old_devices):
         )
     else:
         print("Current device amount is", len(current_devices), device_total_change)
-    print()
 
     # Looking for missing devices
+    print()
     missing_devices = []
 
+    current_devices_copy = current_devices.copy()
+
     for old_device in old_devices:
-        if not device_list_has(old_device, current_devices):
+        if not device_list_has(old_device, current_devices_copy):
             missing_devices.append(old_device)
 
     if len(missing_devices) != 0:
@@ -53,3 +55,23 @@ def compare_device_list(current_devices, old_devices):
             )
     else:
         print(colored("No devices are missing, hooray!", "green"))
+
+    # Looking for new devices
+    print()
+    new_devices = []
+
+    old_devices_copy = old_devices.copy()
+
+    for new_device in current_devices:
+        if not device_list_has(new_device, old_devices_copy):
+            new_devices.append(new_device)
+
+    if len(new_devices) != 0:
+        print(colored(f"{len(new_devices)} device(s) are new. These are: ", "yellow"))
+        for count, dev in enumerate(new_devices):
+            print()
+            print(
+                f"{count + 1}. {dev.device_name} [{dev.device_class}]\n{dev.device_id}"
+            )
+    else:
+        print(colored("No new devices found", "green"))
