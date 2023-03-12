@@ -44,7 +44,15 @@ class BaseProcessor:
 
         return rev_list
 
-    def get_devices(self) -> list[Device]:
+    def get_devices_by_dump_id(self, dump_id) -> list[Device]:
+        devices = self.session.query(Device).filter_by(dump_id=dump_id)
+        return devices
+
+    def get_devices_of_last_dump(self) -> list[Device]:
+        dump = self.session.query(Dump).order_by(Dump.id.desc()).first()
+        return self.session.query(Device).filter_by(dump_id=dump.id)
+
+    def get_current_devices(self) -> list[Device]:
         pass
 
     def dump_devices(self) -> None:
@@ -52,7 +60,7 @@ class BaseProcessor:
 
 
 class WindowsProcessor(BaseProcessor):
-    def get_devices(self) -> list[Device]:
+    def get_current_devices(self) -> list[Device]:
         subprocess.run(
             [
                 "PowerShell",
@@ -88,7 +96,7 @@ class WindowsProcessor(BaseProcessor):
         self.session.commit()
         self.session.refresh(dump)
 
-        device_list = self.get_devices()
+        device_list = self.get_current_devices()
         for device in device_list:
             device.dump_id = dump.id
             self.session.add(device)
