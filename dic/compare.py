@@ -25,7 +25,14 @@ def compare_device_list(current_devices, old_devices):
         device_total_change = "(" + colored(f"{device_total_change}", "red") + ")"
 
     print("Previous device amount is", len(old_devices))
-    print("Current device amount is", len(current_devices), device_total_change)
+    if device_total_change == "":
+        print(
+            f"Current device amount is",
+            colored(f"{len(current_devices)}", "green"),
+            "too",
+        )
+    else:
+        print("Current device amount is", len(current_devices), device_total_change)
     print()
 
     # Looking for missing devices
@@ -45,4 +52,4 @@ def compare_device_list(current_devices, old_devices):
                 f"{count + 1}. {dev.device_name} [{dev.device_class}]\n{dev.device_id}"
             )
     else:
-        print("No devices are missing")
+        print(colored("No devices are missing, hooray!", "green"))
