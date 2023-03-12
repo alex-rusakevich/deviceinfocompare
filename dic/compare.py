@@ -9,6 +9,19 @@ def device_list_has(device, device_list):
     return False
 
 
+def state_changed(device, old_device_list):
+    for devlist_device in old_device_list:
+        if device.device_id == devlist_device.device_id:
+            if device.device_status != devlist_device.device_status:
+                return {
+                    "from": devlist_device.device_status,
+                    "to": device.device_status,
+                }
+            else:
+                return "no_changes"
+    return "not_found"
+
+
 def compare_device_list(current_devices, old_devices):
     if callable(getattr(current_devices, "filter", None)):
         current_devices = [obj for obj in current_devices.all()]
@@ -75,3 +88,49 @@ def compare_device_list(current_devices, old_devices):
             )
     else:
         print(colored("No new devices found", "green"))
+
+    # Looking for fixed/broken devices
+    fixed_devices = []
+    broken_devices = []
+
+    for new_device in current_devices:
+        chng_state = state_changed(new_device, old_devices)
+        if chng_state == "not_found" or chng_state == "no_changes":
+            continue
+
+        if chng_state["to"] == True:
+            fixed_devices.append(new_device)
+        elif chng_state["to"] == False:
+            broken_devices.append(new_device)
+
+    print()
+    if len(broken_devices) != 0:
+        print(
+            colored(
+                f"{len(broken_devices)} device(s) are broken since dump. These are: ",
+                "red",
+            )
+        )
+        for count, dev in enumerate(broken_devices):
+            print()
+            print(
+                f"{count + 1}. {dev.device_name} [{dev.device_class}]\n{dev.device_id}"
+            )
+    else:
+        print(colored("No devices are broken since dump", "green"))
+
+    print()
+    if len(fixed_devices) != 0:
+        print(
+            colored(
+                f"{len(fixed_devices)} device(s) are fixed since dump. These are: ",
+                "green",
+            )
+        )
+        for count, dev in enumerate(fixed_devices):
+            print()
+            print(
+                f"{count + 1}. {dev.device_name} [{dev.device_class}]\n{dev.device_id}"
+            )
+    else:
+        print(colored("No devices are fixed since dump", "red"))
