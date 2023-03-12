@@ -40,15 +40,15 @@ def compare_device_list(current_devices, old_devices):
     print("Previous device amount is", len(old_devices))
     if device_total_change == "":
         print(
-            f"Current device amount is",
+            f"[+] Current device amount is",
             colored(f"{len(current_devices)}", "green"),
             "too",
         )
     else:
-        print("Current device amount is", len(current_devices), device_total_change)
+        print("[-] Current device amount is", len(current_devices), device_total_change)
+    print()
 
     # Looking for missing devices
-    print()
     missing_devices = []
 
     current_devices_copy = current_devices.copy()
@@ -59,18 +59,19 @@ def compare_device_list(current_devices, old_devices):
 
     if len(missing_devices) != 0:
         print(
-            colored(f"{len(missing_devices)} device(s) are missing. These are: ", "red")
+            colored(
+                f"[-] {len(missing_devices)} device(s) are missing. These are: ", "red"
+            )
         )
         for count, dev in enumerate(missing_devices):
-            print()
             print(
                 f"{count + 1}. {dev.device_name} [{dev.device_class}]\n{dev.device_id}"
             )
+            print()
     else:
-        print(colored("No devices are missing, hooray!", "green"))
+        print(colored("[+] No devices are missing, hooray!", "green"))
 
     # Looking for new devices
-    print()
     new_devices = []
 
     old_devices_copy = old_devices.copy()
@@ -80,14 +81,16 @@ def compare_device_list(current_devices, old_devices):
             new_devices.append(new_device)
 
     if len(new_devices) != 0:
-        print(colored(f"{len(new_devices)} device(s) are new. These are: ", "yellow"))
+        print(
+            colored(f"[?] {len(new_devices)} device(s) are new. These are: ", "yellow")
+        )
         for count, dev in enumerate(new_devices):
-            print()
             print(
                 f"{count + 1}. {dev.device_name} [{dev.device_class}]\n{dev.device_id}"
             )
+            print()
     else:
-        print(colored("No new devices found", "green"))
+        print(colored("[?] No new devices found", "yellow"))
 
     # Looking for fixed/broken devices
     fixed_devices = []
@@ -103,34 +106,32 @@ def compare_device_list(current_devices, old_devices):
         elif chng_state["to"] == False:
             broken_devices.append(new_device)
 
-    print()
     if len(broken_devices) != 0:
         print(
             colored(
-                f"{len(broken_devices)} device(s) are broken since dump. These are: ",
+                f"[-] {len(broken_devices)} device(s) are broken since dump. These are: ",
                 "red",
             )
         )
         for count, dev in enumerate(broken_devices):
-            print()
             print(
                 f"{count + 1}. {dev.device_name} [{dev.device_class}]\n{dev.device_id}"
             )
+            print()
     else:
-        print(colored("No devices are broken since dump", "green"))
+        print(colored("[+] No devices are broken since dump", "green"))
 
-    print()
     if len(fixed_devices) != 0:
         print(
             colored(
-                f"{len(fixed_devices)} device(s) are fixed since dump. These are: ",
+                f"[+] {len(fixed_devices)} device(s) are fixed since dump. These are: ",
                 "green",
             )
         )
         for count, dev in enumerate(fixed_devices):
-            print()
             print(
                 f"{count + 1}. {dev.device_name} [{dev.device_class}]\n{dev.device_id}"
             )
+            print()
     else:
-        print(colored("No devices are fixed since dump", "red"))
+        print(colored("[-] No devices are fixed since dump", "red"))

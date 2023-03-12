@@ -14,7 +14,10 @@ def main():
     else:
         raise Exception(f"DIC can't work on {system_name} yet")
 
-    argparser = argparse.ArgumentParser()
+    argparser = argparse.ArgumentParser(
+        description="dic is the program to help you to know if technical service was done well. \
+Just create a dump of you devices info data to compare with the result after service center work"
+    )
     argparser.add_argument(
         "-d", "--dump", help="create current devices dump and exit", action="store_true"
     )
