@@ -40,7 +40,7 @@ class BaseProcessor:
         rev_list = []
 
         for rev in dumps:
-            rev_list.append((rev.id, rev.datetime))
+            rev_list.append((rev.id, rev.datetime, rev.desc))
 
         return rev_list
 
@@ -59,7 +59,7 @@ class BaseProcessor:
     def get_current_devices(self) -> list[Device]:
         pass
 
-    def dump_devices(self) -> None:
+    def dump_devices(self, dump_desc: str) -> Dump:
         pass
 
 
@@ -94,8 +94,8 @@ class WindowsProcessor(BaseProcessor):
 
         return device_list
 
-    def dump_devices(self) -> Dump:
-        dump = Dump(datetime=datetime.datetime.utcnow())
+    def dump_devices(self, dump_desc: str = "No description") -> Dump:
+        dump = Dump(datetime=datetime.datetime.utcnow(), desc=dump_desc)
         self.session.add(dump)
         self.session.commit()
         self.session.refresh(dump)

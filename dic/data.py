@@ -9,6 +9,7 @@ class Dump(DeclarativeBase):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     datetime = Column(DateTime)
+    desc = Column(String)
 
 
 class Device(DeclarativeBase):

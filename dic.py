@@ -19,7 +19,12 @@ def main():
 Just create a dump of you devices info data to compare with the result after service center work"
     )
     argparser.add_argument(
-        "-d", "--dump", help="create current devices dump and exit", action="store_true"
+        "-d",
+        "--dump",
+        help="create current devices dump and exit",
+        type=str,
+        nargs="?",
+        const="No description",
     )
     argparser.add_argument(
         "-r",
@@ -58,7 +63,7 @@ Just create a dump of you devices info data to compare with the result after ser
     args = argparser.parse_args()
 
     if args.dump:
-        revision_info = data_processor.dump_devices()
+        revision_info = data_processor.dump_devices(args.dump)
         print(
             f"Dump with id {revision_info.id} was created successfully at {revision_info.datetime}"
         )
@@ -84,10 +89,18 @@ Just create a dump of you devices info data to compare with the result after ser
         if len(dump_data_list) == 0:
             print("Database has no dumps")
         elif len(dump_data_list) == 1:
-            print(tabulate(dump_data_list, headers=("ID", "Datetime created")))
+            print(
+                tabulate(
+                    dump_data_list, headers=("ID", "Datetime created", "Description")
+                )
+            )
             print("\nDatabase has 1 dump in total")
         else:
-            print(tabulate(dump_data_list, headers=("ID", "Datetime created")))
+            print(
+                tabulate(
+                    dump_data_list, headers=("ID", "Datetime created", "Description")
+                )
+            )
             print("\nDatabase has", len(dump_data_list), "dumps in total")
     elif args.compare:
         compare_device_list(
