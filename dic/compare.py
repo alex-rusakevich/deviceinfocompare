@@ -37,13 +37,12 @@ def compare_device_list(current_devices, old_devices):
 
     if len(missing_devices) != 0:
         print(
-            colored(
-                f"{len(missing_devices)} device(s) are missing. These are: \n", "red"
-            )
+            colored(f"{len(missing_devices)} device(s) are missing. These are: ", "red")
         )
         for count, dev in enumerate(missing_devices):
+            print()
             print(
-                f"{count + 1}. {dev.device_name} [{dev.device_class}]\n{dev.device_id}\n"
+                f"{count + 1}. {dev.device_name} [{dev.device_class}]\n{dev.device_id}"
             )
     else:
         print("No devices are missing")
