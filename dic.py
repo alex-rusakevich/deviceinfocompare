@@ -1,7 +1,12 @@
-import platform, argparse, colorama
-from dic.processors import *
+import argparse
+import platform
+
+import colorama
 from tabulate import tabulate
+
+import dic
 from dic.compare import compare_device_list
+from dic.processors import *
 
 
 def main():
@@ -15,8 +20,17 @@ def main():
         raise Exception(f"DIC can't work on {system_name} yet")
 
     argparser = argparse.ArgumentParser(
-        description="dic is the program to help you to know if technical service was done well. \
-Just create a dump of you devices info data to compare with the result after service center work"
+        description=f"""deviceinfocompare (dic) is the program created to help you to know if 
+technical service was done well. 
+Just create a dump of you devices info data to compare with the result after service center work""",
+        epilog=f"The author is {dic.__author__}",
+    )
+
+    argparser.add_argument(
+        "-v",
+        "--version",
+        action="store_true",
+        help="show program's version and exit",
     )
     argparser.add_argument(
         "-d",
@@ -62,7 +76,9 @@ Just create a dump of you devices info data to compare with the result after ser
     )
     args = argparser.parse_args()
 
-    if args.dump:
+    if args.version:
+        print(f"deviceinfocompare's version is {dic.__version__}")
+    elif args.dump:
         revision_info = data_processor.dump_devices(args.dump)
         print(
             f"Dump with id {revision_info.id} was created successfully at {revision_info.datetime}"

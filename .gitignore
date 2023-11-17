@@ -1,3 +1,5 @@
-.vscode/
 dump/
+__pycache__/
+
+.python-version
 deviceinfo.db

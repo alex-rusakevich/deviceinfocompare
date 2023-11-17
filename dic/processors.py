@@ -1,8 +1,12 @@
-import subprocess, json
-from dic.data import Device, Dump, DeclarativeBase
+import datetime
+import json
+import subprocess
+from typing import Sequence
+
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
-import datetime, locale
+
+from dic.data import DeclarativeBase, Device, Dump
 
 
 class BaseProcessor:
@@ -35,7 +39,7 @@ class BaseProcessor:
             self.session.delete(dev)
         self.session.commit()
 
-    def get_dump_list(self) -> list[tuple]:
+    def get_dump_list(self) -> Sequence[tuple]:
         dumps = self.session.query(Dump)
         rev_list = []
 
@@ -44,19 +48,19 @@ class BaseProcessor:
 
         return rev_list
 
-    def get_devices_by_dump_id(self, dump_id) -> list[Device]:
+    def get_devices_by_dump_id(self, dump_id) -> Sequence[Device]:
         devices = self.session.query(Device).filter_by(dump_id=dump_id)
         if not devices or not self.session.query(Dump).filter_by(id=dump_id).first():
             raise Exception(f"No devices found by dump_id {dump_id}")
         return devices
 
-    def get_devices_of_last_dump(self) -> list[Device]:
+    def get_devices_of_last_dump(self) -> Sequence[Device]:
         dump = self.session.query(Dump).order_by(Dump.id.desc()).first()
         if not dump:
             raise Exception("No dumps found")
         return self.session.query(Device).filter_by(dump_id=dump.id)
 
-    def get_current_devices(self) -> list[Device]:
+    def get_current_devices(self) -> Sequence[Device]:
         pass
 
     def dump_devices(self, dump_desc: str) -> Dump:
@@ -64,7 +68,7 @@ class BaseProcessor:
 
 
 class WindowsProcessor(BaseProcessor):
-    def get_current_devices(self) -> list[Device]:
+    def get_current_devices(self) -> Sequence[Device]:
         subprocess.run(
             [
                 "PowerShell",
