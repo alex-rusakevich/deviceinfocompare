@@ -6,7 +6,7 @@ from typing import Sequence
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 
-from dic.data import DeclarativeBase, Device, Dump
+from deviceinfocompare.data import DeclarativeBase, Device, Dump
 
 
 class BaseProcessor:

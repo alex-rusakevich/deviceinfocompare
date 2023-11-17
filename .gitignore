@@ -1,5 +1,9 @@
 dump/
 __pycache__/
+dist/
+build/
+node_modules/
 
 .python-version
 deviceinfo.db
+*.spec

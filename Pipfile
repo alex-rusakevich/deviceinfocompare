@@ -13,6 +13,7 @@ termcolor = "*"
 black = "*"
 isort = "*"
 invoke = "*"
+pyinstaller = "*"
 
 [requires]
 python_version = "3.8"

@@ -4,9 +4,9 @@ import platform
 import colorama
 from tabulate import tabulate
 
-import dic
-from dic.compare import compare_device_list
-from dic.processors import *
+import deviceinfocompare
+from deviceinfocompare.compare import compare_device_list
+from deviceinfocompare.processors import *
 
 
 def main():
@@ -23,7 +23,7 @@ def main():
         description=f"""deviceinfocompare (dic) is the program created to help you to know if 
 technical service was done well. 
 Just create a dump of you devices info data to compare with the result after service center work""",
-        epilog=f"The author is {dic.__author__}",
+        epilog=f"The author is {deviceinfocompare.__author__}",
     )
 
     argparser.add_argument(
@@ -77,7 +77,7 @@ Just create a dump of you devices info data to compare with the result after ser
     args = argparser.parse_args()
 
     if args.version:
-        print(f"deviceinfocompare's version is {dic.__version__}")
+        print(f"deviceinfocompare's version is {deviceinfocompare.__version__}")
     elif args.dump:
         revision_info = data_processor.dump_devices(args.dump)
         print(
