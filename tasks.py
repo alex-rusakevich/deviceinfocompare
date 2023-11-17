@@ -73,7 +73,7 @@ def tag(context):
 
     latest_tag = StringIO()
 
-    run("git describe --abbrev=0 --tags", out_stream=latest_tag)
+    run("git describe --abbrev=0 --tags", out_stream=latest_tag, warn=True)
     latest_tag = latest_tag.getvalue().strip()
 
     if f"v{DIC_VERSION}" != latest_tag:
