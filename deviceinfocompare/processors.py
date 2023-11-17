@@ -3,21 +3,17 @@ import json
 import subprocess
 from typing import Sequence
 
-import sqlalchemy
-from sqlalchemy.orm import sessionmaker
-
-from deviceinfocompare.data import DeclarativeBase, Device, Dump
+from deviceinfocompare.data import Device, Dump
+from deviceinfocompare.settings import ENGINE, SESSION, closeDB
 
 
 class BaseProcessor:
     def __init__(self) -> None:
-        self.engine = sqlalchemy.create_engine("sqlite:///deviceinfo.db")
-        DeclarativeBase.metadata.create_all(self.engine)
-        self.session = sessionmaker(bind=self.engine)()
+        self.engine = ENGINE
+        self.session = SESSION
 
     def __del__(self) -> None:
-        self.session.close()
-        self.engine.dispose()
+        closeDB()
 
     def remove_dump(self, dump_id: int):
         dumps = self.session.query(Dump).filter_by(id=dump_id)
