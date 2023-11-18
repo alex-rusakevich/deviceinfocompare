@@ -70,13 +70,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.err_msg.setIcon(QMessageBox.Icon.Critical)
         self.err_msg.setWindowTitle("Error")
         self.err_msg.setWindowIcon(
-            QtGui.QIcon(os.path.join(RESOURCE_PATH, "ui", "error.png"))
+            QtGui.QIcon(os.path.join(RESOURCE_PATH, "ui", "exclamation-red.png"))
         )
         # endregion
 
         self.connectEvents()
 
-        dump_data_list = data_processor.get_dump_list()
+        dump_data_list = reversed(data_processor.get_dump_list())
         entries = (
             f"#0 [{strip_s_ms(datetime.datetime.utcnow())}] Current device list",
             *[f"#{i[0]} [{strip_s_ms(i[1])}] {i[2]}" for i in dump_data_list],
@@ -90,7 +90,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 app = QtWidgets.QApplication(sys.argv)
-app.setStyle("Fusion")
 window = MainWindow()
 
 

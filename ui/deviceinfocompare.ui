@@ -21,12 +21,16 @@
        <widget class="QPushButton" name="addPushButton">
         <property name="maximumSize">
          <size>
-          <width>100</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
         <property name="text">
          <string>Add</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>plus-circle.png</normaloff>plus-circle.png</iconset>
         </property>
        </widget>
       </item>
@@ -34,12 +38,16 @@
        <widget class="QPushButton" name="deletePushButton">
         <property name="maximumSize">
          <size>
-          <width>100</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
         <property name="text">
          <string>Delete</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>minus-circle.png</normaloff>minus-circle.png</iconset>
         </property>
        </widget>
       </item>
@@ -60,11 +68,53 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="QPushButton" name="comparePushButton">
           <property name="text">
            <string>Compare</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>books.png</normaloff>books.png</iconset>
+          </property>
          </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="revealDBPushButton">
+          <property name="text">
+           <string>Reveal database
+in file explorer</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>database-share.png</normaloff>database-share.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
