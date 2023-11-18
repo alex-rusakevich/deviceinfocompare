@@ -21,6 +21,8 @@ LOG_LVL: str = "DEBUG" if DEBUG else "WARNING"
 
 LOG_DIR: Path = Path(os.path.join(BASE_DIR, "logs"))
 
+RESOURCE_PATH = Path(getattr(sys, "_MEIPASS", os.path.abspath(".")))
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

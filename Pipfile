@@ -8,12 +8,14 @@ sqlalchemy = "*"
 tabulate = "*"
 colorama = "*"
 termcolor = "*"
+pyqt6 = "*"
 
 [dev-packages]
 black = "*"
 isort = "*"
 invoke = "*"
 pyinstaller = "*"
+pyqt6-tools = "*"
 
 [requires]
 python_version = "3.8"

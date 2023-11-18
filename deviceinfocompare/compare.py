@@ -1,4 +1,6 @@
-from termcolor import colored
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def device_list_has(device, device_list):
@@ -33,33 +35,21 @@ def compare_device_list(current_devices, old_devices):
     if device_total_change == 0:
         device_total_change = ""
     elif device_total_change > 0:
-        device_total_change = "(" + colored(f"+{device_total_change}", "yellow") + ")"
+        device_total_change = "(" + f"+{device_total_change}" + ")"
     else:
-        device_total_change = "(" + colored(f"{device_total_change}", "red") + ")"
+        device_total_change = "(" + f"{device_total_change}" + ")"
 
-    print("Previous device amount is", len(old_devices))
+    logger.info(f"Previous device amount is {len(old_devices)}")
     if device_total_change == "":
-        print(
-            colored("[+]", "green"),
-            "Current device amount is",
-            colored(f"{len(current_devices)}", "green"),
-            "too",
-        )
+        logger.info(f"[+] Current device amount is {len(current_devices)} too")
     elif "+" in device_total_change:
-        print(
-            colored("[?]", "yellow"),
-            "Current device amount is",
-            len(current_devices),
-            device_total_change,
+        logger.info(
+            f"[?] Current device amount is {len(current_devices)} {device_total_change}"
         )
     else:
-        print(
-            colored("[-]", "red"),
-            "Current device amount is",
-            len(current_devices),
-            device_total_change,
+        logger.info(
+            f"[-] Current device amount is {len(current_devices)} {device_total_change}"
         )
-    print()
 
     # Looking for missing devices
     missing_devices = []
@@ -71,18 +61,15 @@ def compare_device_list(current_devices, old_devices):
             missing_devices.append(old_device)
 
     if len(missing_devices) != 0:
-        print(
-            colored(
-                f"[-] {len(missing_devices)} device(s) are missing. These are: ", "red"
-            )
+        logger.info(
+            f"[-] {len(missing_devices)} device(s) are missing. These are: ",
         )
         for count, dev in enumerate(missing_devices):
-            print(
+            logger.info(
                 f"{count + 1}. {dev.device_name} [{dev.device_class}]\n{dev.device_id}"
             )
-            print()
     else:
-        print(colored("[+] No devices are missing, hooray!", "green"))
+        logger.info("[+] No devices are missing, hooray!")
 
     # Looking for new devices
     new_devices = []
@@ -94,16 +81,13 @@ def compare_device_list(current_devices, old_devices):
             new_devices.append(new_device)
 
     if len(new_devices) != 0:
-        print(
-            colored(f"[?] {len(new_devices)} device(s) are new. These are: ", "yellow")
-        )
+        logger.info(f"[?] {len(new_devices)} device(s) are new. These are: ")
         for count, dev in enumerate(new_devices):
-            print(
+            logger.info(
                 f"{count + 1}. {dev.device_name} [{dev.device_class}]\n{dev.device_id}"
             )
-            print()
     else:
-        print(colored("[?] No new devices found", "yellow"))
+        logger.info("[?] No new devices found")
 
     # Looking for fixed/broken devices
     fixed_devices = []
@@ -120,31 +104,23 @@ def compare_device_list(current_devices, old_devices):
             broken_devices.append(new_device)
 
     if len(broken_devices) != 0:
-        print(
-            colored(
-                f"[-] {len(broken_devices)} device(s) are broken since dump. These are: ",
-                "red",
-            )
+        logger.info(
+            f"[-] {len(broken_devices)} device(s) are broken since dump. These are: "
         )
         for count, dev in enumerate(broken_devices):
-            print(
+            logger.info(
                 f"{count + 1}. {dev.device_name} [{dev.device_class}]\n{dev.device_id}"
             )
-            print()
     else:
-        print(colored("[+] No devices are broken since dump", "green"))
+        logger.info("[+] No devices are broken since dump")
 
     if len(fixed_devices) != 0:
-        print(
-            colored(
-                f"[+] {len(fixed_devices)} device(s) are fixed since dump. These are: ",
-                "green",
-            )
+        logger.info(
+            f"[+] {len(fixed_devices)} device(s) are fixed since dump. These are: "
         )
         for count, dev in enumerate(fixed_devices):
-            print(
+            logger.info(
                 f"{count + 1}. {dev.device_name} [{dev.device_class}]\n{dev.device_id}"
             )
-            print()
     else:
-        print(colored("[-] No devices are fixed since dump", "red"))
+        logger.info("[-] No devices are fixed since dump")
