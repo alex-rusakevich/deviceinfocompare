@@ -15,9 +15,9 @@ BASE_DIR: Path = Path(
     )
 )
 
-DEBUG: bool = os.environ.get("DIC_DEBUG", True) in ["t", True, "true"]
+DEBUG: bool = os.environ.get("DIC_DEBUG", False) in ["t", True, "true"]
 
-LOG_LVL: str = "DEBUG" if DEBUG else "WARNING"
+LOG_LVL: str = "DEBUG" if DEBUG else "INFO"
 
 LOG_DIR: Path = Path(os.path.join(BASE_DIR, "logs"))
 

@@ -9,6 +9,7 @@ tabulate = "*"
 colorama = "*"
 termcolor = "*"
 pyqt6 = "*"
+show-in-file-manager = "*"
 
 [dev-packages]
 black = "*"

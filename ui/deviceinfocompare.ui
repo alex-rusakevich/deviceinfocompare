@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>330</height>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,7 +43,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Delete</string>
+         <string>Remove</string>
         </property>
         <property name="icon">
          <iconset>
@@ -52,7 +52,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit">
+       <widget class="QLineEdit" name="dumpTitleLineEdit">
         <property name="placeholderText">
          <string>Input new device info dump's name here...</string>
         </property>
@@ -63,7 +63,14 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QListView" name="leftListView"/>
+       <widget class="QListView" name="leftListView">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
       </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -119,7 +126,14 @@ in file explorer</string>
        </layout>
       </item>
       <item>
-       <widget class="QListView" name="rightListView"/>
+       <widget class="QListView" name="rightListView">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -128,7 +142,7 @@ in file explorer</string>
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>150</height>
+        <height>16777215</height>
        </size>
       </property>
       <property name="readOnly">
