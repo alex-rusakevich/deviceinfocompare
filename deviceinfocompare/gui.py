@@ -74,7 +74,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.add_dump_worker.finished.connect(self.add_dump_worker.deleteLater)
         self.add_dump_thread.finished.connect(self.add_dump_thread.deleteLater)
 
-        logger.info(f"Started making dump '{title}'")
+        logger.info(f"Started making dump '{title}', please, wait...")
         self.setAllButtonsEnabled(False)
         self.add_dump_thread.start()
 

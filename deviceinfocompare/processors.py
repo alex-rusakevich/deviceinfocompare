@@ -1,10 +1,15 @@
 import datetime
 import json
+import logging
 import subprocess
 from typing import Sequence
 
+from sqlalchemy import text
+
 from deviceinfocompare.data import Device, Dump
 from deviceinfocompare.settings import ENGINE, SESSION, closeDB
+
+logger = logging.getLogger(__name__)
 
 
 class BaseProcessor:
@@ -23,7 +28,16 @@ class BaseProcessor:
         devices = self.session.query(Device).filter_by(dump_id=dump_id)
         for dev in devices:
             self.session.delete(dev)
+
         self.session.commit()
+
+        # region Reduce DB size after deletion
+        logger.debug("Performing vacuum on deletion")
+
+        with self.engine.connect() as conn:
+            with conn.execution_options(isolation_level="AUTOCOMMIT"):
+                conn.execute(text("vacuum"))
+        # endregion
 
     def clear_dumps(self) -> None:
         dumps = self.session.query(Dump)
