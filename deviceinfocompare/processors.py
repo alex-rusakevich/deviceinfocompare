@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import subprocess
+import sys
 from typing import Sequence
 
 from sqlalchemy import text
@@ -83,16 +84,25 @@ class WindowsProcessor(BaseProcessor):
             [
                 "PowerShell",
                 "-Command",
-                "[Console]::OutputEncoding = [Text.UTF8Encoding]::UTF8",
-            ]
+                '[Console]::OutputEncoding = [System.Text.Encoding]::GetEncoding("utf-8")',
+            ],
+            creationflags=subprocess.CREATE_NO_WINDOW,
         )
 
-        process_out = None
         process_out = subprocess.check_output(
-            'PowerShell -Command "& {Get-PnpDevice -PresentOnly | Select-Object Status,Class,FriendlyName,InstanceId | ConvertTo-Json}"'
-        )
+            'PowerShell -Command "& {Get-PnpDevice -PresentOnly | Select-Object Status,Class,FriendlyName,InstanceId | ConvertTo-Json}"',
+            shell=False,
+            stdin=subprocess.DEVNULL,
+            creationflags=subprocess.CREATE_NO_WINDOW,
+        ).decode("utf-8", errors="ignore")
 
-        json_out = json.loads(process_out)
+        # logger.debug(f"Process output was {process_out}")
+
+        try:
+            json_out = json.loads(process_out)
+        except:
+            logger.exception("")
+            sys.exit(1)
 
         device_list = []
         for json_device in json_out:

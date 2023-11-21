@@ -22,12 +22,12 @@ def build(context):
     run(
         f'pyinstaller \
 --name=deviceinfocompare-v{DIC_VERSION} \
---noconfirm --onefile \
+--noconfirm --onefile --windowed \
 --icon "./ui/icons/favicon.ico" \
 --add-data "./deviceinfocompare;deviceinfocompare/" \
 --add-data "./ui;ui/" \
 --add-data "./cdic.py;." \
-"./cdic.py"'
+"./dic.py"'
     )
 
 
