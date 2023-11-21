@@ -55,6 +55,15 @@ class QTextEditLogger(logging.Handler):
         self.widget.append(f"<span {text_color_attrib}>{msg}</span>")
 
 
+class TryWorker(QObject):
+    def run(self):
+        try:
+            return self.worker_fn()
+        except:
+            logger.exception("")
+            sys.exit(-1)
+
+
 class MainWindow(QtWidgets.QMainWindow):
     # region Events
     def on_event_revealDBPushButton_clicked(self):
@@ -68,7 +77,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def on_event_addPushButton_clicked(self):
-        class Worker(QObject):
+        class Worker(TryWorker):
             finished = pyqtSignal()
 
             def __init__(self, *args, **kwargs):
@@ -76,7 +85,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.title = kwargs.pop("title")
                 super().__init__(*args, **kwargs)
 
-            def run(self):
+            def worker_fn(self):
                 self.data_processor.dump_devices(self.title)
                 self.finished.emit()
 
@@ -102,7 +111,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def on_event_deletePushButton_clicked(self):
-        class Worker(QObject):
+        class Worker(TryWorker):
             finished = pyqtSignal()
 
             def __init__(self, *args, **kwargs):
@@ -110,7 +119,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.dump_id = kwargs.pop("dump_id")
                 super().__init__(*args, **kwargs)
 
-            def run(self):
+            def worker_fn(self):
                 self.data_processor.remove_dump(self.dump_id)
                 self.finished.emit()
 
@@ -149,7 +158,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def on_event_comparePushButton_clicked(self):
-        class Worker(QObject):
+        class Worker(TryWorker):
             finished = pyqtSignal()
 
             def __init__(self, *args, **kwargs):
@@ -158,7 +167,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.right_dump_id = kwargs.pop("right_dump_id")
                 super().__init__(*args, **kwargs)
 
-            def run(self):
+            def worker_fn(self):
                 device_seq_left = None
                 if self.left_dump_id == 0:
                     device_seq_left = self.data_processor.get_current_devices()
