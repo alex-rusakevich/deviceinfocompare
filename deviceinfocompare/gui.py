@@ -4,10 +4,11 @@ import os
 import platform
 import re
 import sys
+import webbrowser
 from typing import Optional, Union
 
 from PyQt6 import QtGui, QtWidgets, uic
-from PyQt6.QtCore import QObject, QStringListModel, QThread, pyqtSignal
+from PyQt6.QtCore import QObject, QStringListModel, Qt, QThread, pyqtSignal
 from PyQt6.QtWidgets import QListView, QMessageBox, QTextEdit
 from showinfm import show_in_file_manager
 
@@ -101,11 +102,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.add_dump_thread.finished.connect(self.add_dump_thread.deleteLater)
 
         logger.info(f"Started making dump '{title}', please, wait...")
-        self.setAllButtonsEnabled(False)
+        self.setAllControlsEnabled(False)
         self.add_dump_thread.start()
 
         self.add_dump_thread.finished.connect(lambda: self.populateDumpLists())
-        self.add_dump_thread.finished.connect(lambda: self.setAllButtonsEnabled(True))
+        self.add_dump_thread.finished.connect(lambda: self.setAllControlsEnabled(True))
         self.add_dump_thread.finished.connect(
             lambda: logger.info("The new dump has been created!")
         )
@@ -146,12 +147,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.delete_dump_thread.finished.connect(self.delete_dump_thread.deleteLater)
 
         logger.info(f"Started deleting dump with id {dump_id}")
-        self.setAllButtonsEnabled(False)
+        self.setAllControlsEnabled(False)
         self.delete_dump_thread.start()
 
         self.delete_dump_thread.finished.connect(lambda: self.populateDumpLists())
         self.delete_dump_thread.finished.connect(
-            lambda: self.setAllButtonsEnabled(True)
+            lambda: self.setAllControlsEnabled(True)
         )
         self.delete_dump_thread.finished.connect(
             lambda: logger.info("The dump has been deleted successfully!")
@@ -184,7 +185,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         self.right_dump_id
                     )
 
-                compare_device_list(device_seq_left, device_seq_right)
+                compare_device_list(device_seq_right, device_seq_left)
 
                 self.finished.emit()
 
@@ -215,12 +216,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.compare_dump_thread.finished.connect(self.compare_dump_thread.deleteLater)
 
         logger.info(f"Started comparing dumps #{left_id} and #{right_id}")
-        self.setAllButtonsEnabled(False)
+        self.setAllControlsEnabled(False)
         self.compare_dump_thread.start()
 
         self.compare_dump_thread.finished.connect(lambda: self.populateDumpLists())
         self.compare_dump_thread.finished.connect(
-            lambda: self.setAllButtonsEnabled(True)
+            lambda: self.setAllControlsEnabled(True)
         )
         self.compare_dump_thread.finished.connect(
             lambda: logger.info("The dumps have been compared successfully")
@@ -253,11 +254,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.leftListView.setModel(model)
         self.rightListView.setModel(model)
 
-    def setAllButtonsEnabled(self, desired_state: bool = True) -> None:
+    def setAllControlsEnabled(self, desired_state: bool = True) -> None:
         for button in (
             self.comparePushButton,
             self.deletePushButton,
             self.addPushButton,
+            self.leftListView,
+            self.rightListView,
+            self.revealDBPushButton,
         ):
             button.setEnabled(desired_state)
 
@@ -307,6 +311,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.populateDumpLists()
         self.connectEvents()
+
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key.Key_F1:
+            webbrowser.open("https://github.com/alex-rusakevich/deviceinfocompare")
+        elif (
+            e.key() == Qt.Key.Key_F5
+            and e.modifiers() == Qt.KeyboardModifier.AltModifier
+        ):
+            self.setWindowTitle("I ❤️❤️❤️ you! :D")
 
 
 app = QtWidgets.QApplication(sys.argv)
