@@ -3,8 +3,6 @@ from io import StringIO
 
 from invoke import run, task
 
-os.environ["DIC_BASE_DIR"] = os.path.join(".", ".deviceinfocompare")
-
 
 @task
 def designer(context):

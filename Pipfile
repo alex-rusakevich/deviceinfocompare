@@ -10,6 +10,7 @@ colorama = "*"
 termcolor = "*"
 pyqt6 = "*"
 show-in-file-manager = "*"
+python-dotenv = "*"
 
 [dev-packages]
 black = "*"

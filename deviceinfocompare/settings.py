@@ -5,9 +5,13 @@ import sys
 from pathlib import Path
 
 import sqlalchemy
+from dotenv import load_dotenv
 from sqlalchemy.orm import sessionmaker
 
 from deviceinfocompare.data import DeclarativeBase
+
+load_dotenv()
+
 
 BASE_DIR: Path = Path(
     os.environ.get(
