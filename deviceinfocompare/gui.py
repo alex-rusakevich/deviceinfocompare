@@ -54,6 +54,9 @@ class QTextEditLogger(logging.Handler):
         text_color_attrib = "" if text_color == "" else f'style="color: {text_color};"'
 
         self.widget.append(f"<span {text_color_attrib}>{msg}</span>")
+        self.widget.verticalScrollBar().setValue(
+            self.widget.verticalScrollBar().maximum()
+        )
 
 
 class TryWorker(QObject):
@@ -262,6 +265,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.leftListView,
             self.rightListView,
             self.revealDBPushButton,
+            self.dumpTitleLineEdit,
         ):
             button.setEnabled(desired_state)
 

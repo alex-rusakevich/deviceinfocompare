@@ -10,7 +10,14 @@ def designer(context):
 
 
 @task
-def build(context):
+def clear(context):
+    os.system("rm -rf build/*.*")
+    os.system("rm -rf dist/*.*")
+    os.system("rm -f *.spec")
+
+
+@task
+def build(context, folder_mode=False):
     DIC_VERSION = (
         open(os.path.join("deviceinfocompare", "VERSION.txt"), "r", encoding="utf8")
         .read()
@@ -20,7 +27,7 @@ def build(context):
     run(
         f'pyinstaller \
 --name=deviceinfocompare-v{DIC_VERSION} \
---noconfirm --onefile --windowed \
+--noconfirm {"--onefile" if not folder_mode else ""} --windowed \
 --icon "./ui/icons/favicon.ico" \
 --add-data "./deviceinfocompare;deviceinfocompare/" \
 --add-data "./ui;ui/" \

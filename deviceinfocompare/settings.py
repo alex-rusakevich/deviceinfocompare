@@ -10,7 +10,7 @@ from sqlalchemy.orm import sessionmaker
 
 from deviceinfocompare.data import DeclarativeBase
 
-load_dotenv()
+load_dotenv("./.env", verbose=True)
 
 
 BASE_DIR: Path = Path(
@@ -60,6 +60,8 @@ LOG_DIR.mkdir(parents=True, exist_ok=True)
 logging.config.dictConfig(LOGGING)
 
 logger = logging.getLogger(__name__)
+
+logger.info(f"Base dir is {BASE_DIR}")
 
 ENGINE = sqlalchemy.create_engine(
     "sqlite:///" + os.path.join(BASE_DIR, "deviceinfo.db")
