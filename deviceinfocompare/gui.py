@@ -4,14 +4,15 @@ import os
 import platform
 import re
 import sys
-from typing import Union
+from typing import Optional, Union
 
 from PyQt6 import QtGui, QtWidgets, uic
 from PyQt6.QtCore import QObject, QStringListModel, QThread, pyqtSignal
-from PyQt6.QtWidgets import QMessageBox, QTextEdit
+from PyQt6.QtWidgets import QListView, QMessageBox, QTextEdit
 from showinfm import show_in_file_manager
 
 import deviceinfocompare
+from deviceinfocompare.compare import compare_device_list
 from deviceinfocompare.processors import *
 from deviceinfocompare.settings import BASE_DIR, LOGGING, RESOURCE_PATH
 
@@ -34,11 +35,11 @@ class QTextEditLogger(logging.Handler):
 
     def emit(self, record):
         COLOR_SIGNS = (
-            ("[WARNING]", "orange"),
+            ("[WARNING]", "darkorange"),
             ("[ERROR]", "red"),
             ("[-]", "red"),
             ("[+]", "green"),
-            ("[?]", "orange"),
+            ("[?]", "darkorange"),
             ("[DEBUG]", "magenta"),
         )
 
@@ -113,17 +114,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.data_processor.remove_dump(self.dump_id)
                 self.finished.emit()
 
-        item_val = self.leftListView.currentIndex().data()
-        logger.debug(f"item data is '{item_val}'")
-        dump_id = -1
+        dump_id = self.getDumpIDfromListView(self.leftListView)
 
-        if item_val == None:
+        if dump_id == None:
             logger.error("No item was selected on the left panel, stopping")
             return
-
-        dump_id = int(re.search(r"(?<=#)\d+(?=\s)", item_val).group())
-
-        if dump_id == 0:
+        elif dump_id == 0:
             logger.error(
                 "Cannot delete dump #0: it's an abstract dump for current device set"
             )
@@ -152,6 +148,75 @@ class MainWindow(QtWidgets.QMainWindow):
             lambda: logger.info("The dump has been deleted successfully!")
         )
 
+    def on_event_comparePushButton_clicked(self):
+        class Worker(QObject):
+            finished = pyqtSignal()
+
+            def __init__(self, *args, **kwargs):
+                self.data_processor = kwargs.pop("data_processor")
+                self.left_dump_id = kwargs.pop("left_dump_id")
+                self.right_dump_id = kwargs.pop("right_dump_id")
+                super().__init__(*args, **kwargs)
+
+            def run(self):
+                device_seq_left = None
+                if self.left_dump_id == 0:
+                    device_seq_left = self.data_processor.get_current_devices()
+                else:
+                    device_seq_left = self.data_processor.get_devices_by_dump_id(
+                        self.left_dump_id
+                    )
+
+                device_seq_right = None
+                if self.right_dump_id == 0:
+                    device_seq_right = self.data_processor.get_current_devices()
+                else:
+                    device_seq_right = self.data_processor.get_devices_by_dump_id(
+                        self.right_dump_id
+                    )
+
+                compare_device_list(device_seq_left, device_seq_right)
+
+                self.finished.emit()
+
+        left_id = self.getDumpIDfromListView(self.leftListView)
+        right_id = self.getDumpIDfromListView(self.rightListView)
+
+        if left_id == None:
+            logger.error("No item was selected on the left panel, stopping")
+            return
+        if right_id == None:
+            logger.error("No item was selected on the right panel, stopping")
+            return
+        if left_id == right_id:
+            logger.error("Cannot compare the same dumps, stopping")
+            return
+
+        self.compare_dump_thread = QThread()
+        self.compare_dump_worker = Worker(
+            data_processor=self.data_processor,
+            left_dump_id=left_id,
+            right_dump_id=right_id,
+        )
+        self.compare_dump_worker.moveToThread(self.compare_dump_thread)
+
+        self.compare_dump_thread.started.connect(self.compare_dump_worker.run)
+        self.compare_dump_worker.finished.connect(self.compare_dump_thread.quit)
+        self.compare_dump_worker.finished.connect(self.compare_dump_worker.deleteLater)
+        self.compare_dump_thread.finished.connect(self.compare_dump_thread.deleteLater)
+
+        logger.info(f"Started comparing dumps #{left_id} and #{right_id}")
+        self.setAllButtonsEnabled(False)
+        self.compare_dump_thread.start()
+
+        self.compare_dump_thread.finished.connect(lambda: self.populateDumpLists())
+        self.compare_dump_thread.finished.connect(
+            lambda: self.setAllButtonsEnabled(True)
+        )
+        self.compare_dump_thread.finished.connect(
+            lambda: logger.info("The dumps have been compared successfully")
+        )
+
     # endregion
 
     def connectEvents(self):
@@ -160,6 +225,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.addPushButton.clicked.connect(self.on_event_addPushButton_clicked)
         self.deletePushButton.clicked.connect(self.on_event_deletePushButton_clicked)
+        self.comparePushButton.clicked.connect(self.on_event_comparePushButton_clicked)
 
     def populateDumpLists(self):
         self.leftListView.setModel(QStringListModel())
@@ -185,6 +251,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.addPushButton,
         ):
             button.setEnabled(desired_state)
+
+    def getDumpIDfromListView(self, list_view: QListView) -> Optional[int]:
+        item_val = list_view.currentIndex().data()
+
+        if item_val == None:
+            return None
+
+        return int(re.search(r"(?<=#)\d+(?=\s)", item_val).group())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

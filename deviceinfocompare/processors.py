@@ -58,7 +58,7 @@ class BaseProcessor:
 
         return rev_list
 
-    def get_devices_by_dump_id(self, dump_id) -> Sequence[Device]:
+    def get_devices_by_dump_id(self, dump_id: int) -> Sequence[Device]:
         devices = self.session.query(Device).filter_by(dump_id=dump_id)
         if not devices or not self.session.query(Dump).filter_by(id=dump_id).first():
             raise Exception(f"No devices found by dump_id {dump_id}")
