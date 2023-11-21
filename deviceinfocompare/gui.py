@@ -4,12 +4,11 @@ import os
 import platform
 import re
 import sys
-from ast import dump
 from typing import Union
 
 from PyQt6 import QtGui, QtWidgets, uic
 from PyQt6.QtCore import QObject, QStringListModel, QThread, pyqtSignal
-from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QMessageBox, QTextEdit
 from showinfm import show_in_file_manager
 
 import deviceinfocompare
@@ -25,7 +24,7 @@ def strip_s_ms(dt_in: Union[str, datetime.datetime]):
 
 
 class QTextEditLogger(logging.Handler):
-    def __init__(self, textedit_widget):
+    def __init__(self, textedit_widget: QTextEdit):
         super().__init__()
         self.widget = textedit_widget
         self.widget.setReadOnly(True)
@@ -34,8 +33,25 @@ class QTextEditLogger(logging.Handler):
         self.setFormatter(formatter)
 
     def emit(self, record):
+        COLOR_SIGNS = (
+            ("[WARNING]", "orange"),
+            ("[ERROR]", "red"),
+            ("[-]", "red"),
+            ("[+]", "green"),
+            ("[?]", "orange"),
+            ("[DEBUG]", "magenta"),
+        )
+
+        text_color = ""
         msg = self.format(record)
-        self.widget.append(msg)
+
+        for sign, color in COLOR_SIGNS:
+            if sign in msg:
+                text_color = color
+
+        text_color_attrib = "" if text_color == "" else f'style="color: {text_color};"'
+
+        self.widget.append(f"<span {text_color_attrib}>{msg}</span>")
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -102,13 +118,15 @@ class MainWindow(QtWidgets.QMainWindow):
         dump_id = -1
 
         if item_val == None:
-            logger.warning("No item was selected on the left panel, stopping")
+            logger.error("No item was selected on the left panel, stopping")
             return
 
         dump_id = int(re.search(r"(?<=#)\d+(?=\s)", item_val).group())
 
         if dump_id == 0:
-            logger.warning("Cannot delete dump #0: it's abstract")
+            logger.error(
+                "Cannot delete dump #0: it's an abstract dump for current device set"
+            )
             return
 
         self.delete_dump_thread = QThread()
@@ -189,7 +207,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.centralWidget.setContentsMargins(11, 11, 11, 11)
         self.setWindowIcon(
-            QtGui.QIcon(os.path.join(RESOURCE_PATH, "ui", "favicon.png"))
+            QtGui.QIcon(os.path.join(RESOURCE_PATH, "ui", "icons", "favicon.png"))
         )
         self.setWindowTitle(f"deviceinfocompare v{deviceinfocompare.__version__}")
 
@@ -198,7 +216,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.err_msg.setIcon(QMessageBox.Icon.Critical)
         self.err_msg.setWindowTitle("Error")
         self.err_msg.setWindowIcon(
-            QtGui.QIcon(os.path.join(RESOURCE_PATH, "ui", "exclamation-red.png"))
+            QtGui.QIcon(
+                os.path.join(RESOURCE_PATH, "ui", "icons", "exclamation-red.png")
+            )
         )
         # endregion
 

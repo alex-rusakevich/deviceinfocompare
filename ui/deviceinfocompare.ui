@@ -30,7 +30,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>plus-circle.png</normaloff>plus-circle.png</iconset>
+          <normaloff>icons/plus-circle.png</normaloff>icons/plus-circle.png</iconset>
         </property>
        </widget>
       </item>
@@ -47,7 +47,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>minus-circle.png</normaloff>minus-circle.png</iconset>
+          <normaloff>icons/minus-circle.png</normaloff>icons/minus-circle.png</iconset>
         </property>
        </widget>
       </item>
@@ -94,7 +94,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>books.png</normaloff>books.png</iconset>
+            <normaloff>icons/books.png</normaloff>icons/books.png</iconset>
           </property>
          </widget>
         </item>
@@ -106,7 +106,7 @@ in file explorer</string>
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>database-share.png</normaloff>database-share.png</iconset>
+            <normaloff>icons/database-share.png</normaloff>icons/database-share.png</iconset>
           </property>
          </widget>
         </item>

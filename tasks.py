@@ -23,7 +23,7 @@ def build(context):
         f'pyinstaller \
 --name=deviceinfocompare-v{DIC_VERSION} \
 --noconfirm --onefile \
---icon "./ui/icon.ico" \
+--icon "./ui/icons/favicon.ico" \
 --add-data "./deviceinfocompare;deviceinfocompare/" \
 --add-data "./ui;ui/" \
 --add-data "./cdic.py;." \
